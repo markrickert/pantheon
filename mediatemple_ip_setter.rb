@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+=begin
+
+ MediaTemple IP Setter
+ 
+ Quickly add your current IP to the whitelist of allowed
+ remote database connections
+
+ The script takes three parameters: the login info you typically put
+ into the ac.mediatemple.net account login page.
+
+=end
+
+require 'rubygems'
+require 'mechanize'
+
+#Check to see if there are three arguments and ONLY three.
+unless ARGV.length == 3
+    puts "USAGE: ruby mediatemple_ip_setter.rb login_domain login_email login_password\n"
+    exit
+end
+
+#These parameters are from your ac.mediatemple.net login screen
+login_domain = ARGV[0]
+login_email = ARGV[1]
+login_password = ARGV[2]
+
+#Additional parmaters for the app
+login_page_url = 'https://ac.mediatemple.net/login.mt?redirect=home.mt'
+database_page_url = 'https://ac.mediatemple.net/services/manage/grid/databases/global.mt?id='
+button_selector = '.acdash-dombutt a'
+
+#Create new Mecahnize object and pull the login page for MediaTemple
+agent = Mechanize.new
+puts 'Logging into Mediatemple...'
+page = agent.get(login_page_url)
+
+login_form = page.forms[0]
+login_form.domain = login_domain
+login_form.login_email = login_email
+login_form.password = login_password
+
+# Submit the login form.
+page = agent.submit(login_form)
+
+#Grab the server's ID to submit the next page request.
+server_id = page.search(button_selector).attr('href').value.scan(/&server=([0-9]{3,})/)[0][0]
+puts 'Got first server ID: ' + server_id
+
+#Get the page for the databases
+database_page_url = database_page_url + server_id
+page = agent.get(database_page_url)
+
+#Now add the current IP to the list.
+db_form = page.forms[2]
+db_form.ip = db_form.curip
+puts 'Setting allowed IP: ' + db_form.curip
+
+page = agent.submit(db_form);
+
+#pp page
+print "Done!\n\n"
