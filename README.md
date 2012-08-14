@@ -31,7 +31,8 @@ Setting allowed IP: 0.0.0.0
 
 Known Issues
 ------------
-The script will fail if you have reached the allotted number of whitelist IP addresses.
+* The script will fail if you have reached the allotted number of whitelist IP addresses.
+* If you have multiple servers on your account, it will only work for the very first one listed in your account center page.
 
 To Do
 -----
