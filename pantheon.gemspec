@@ -4,8 +4,8 @@ require File.expand_path('../lib/pantheon/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Mark Rickert"]
   gem.email         = ["mark@skookum.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = 'Quickly and painlessly add your current IP to the list of allowed remote database connections for your MediaTemple hosting account.'
+  gem.summary       = 'Quickly and painlessly add your current IP to the list of allowed remote database connections for your MediaTemple hosting account.'
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "pantheon"
   gem.require_paths = ["lib"]
   gem.version       = Pantheon::VERSION
+
+  gem.add_runtime_dependency 'mechanize'
 end
