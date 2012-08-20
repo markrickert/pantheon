@@ -3,7 +3,7 @@ require File.expand_path('../lib/pantheon/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Mark Rickert"]
-  gem.email         = ["mark@skookum.com"]
+  gem.email         = ["mjar81@gmail.com"]
   gem.description   = 'Quickly and painlessly add your current IP to the list of allowed remote database connections for your MediaTemple hosting account.'
   gem.summary       = 'Quickly and painlessly add your current IP to the list of allowed remote database connections for your MediaTemple hosting account.'
   gem.homepage      = ""
