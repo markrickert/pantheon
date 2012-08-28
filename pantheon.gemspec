@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = Pantheon::VERSION
 
   gem.add_runtime_dependency 'mechanize'
+  gem.add_runtime_dependency 'ipaddress'
 end

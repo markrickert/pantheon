@@ -14,10 +14,11 @@
 
 require 'rubygems'
 require 'mechanize'
+require 'ipaddress'
 
 #Check to see if there are three arguments and ONLY three.
 unless ARGV.length == 3
-    puts "USAGE: ruby mediatemple_ip_setter.rb login_domain login_email login_password\n"
+    puts "USAGE: pantheon login_domain login_email login_password\n"
     exit
 end
 
@@ -29,6 +30,7 @@ login_password = ARGV[2]
 #Additional parmaters for the app
 login_page_url = 'https://ac.mediatemple.net/login.mt?redirect=home.mt'
 database_page_url = 'https://ac.mediatemple.net/services/manage/grid/databases/global.mt?id='
+removeip_page_url = 'https://ac.mediatemple.net/services/manage/grid/databases/deny_ip.mt?id='
 button_selector = '.acdash-dombutt a'
 
 #Create new Mecahnize object and pull the login page for MediaTemple
@@ -52,10 +54,20 @@ puts 'Got first server ID: ' + server_id
 database_page_url = database_page_url + server_id
 page = agent.get(database_page_url)
 
+#Now we want to submit the form as many times as it takes to clear out the list of current IP addresses
+current_ips = page.search('ul.dbextlister li.four').text.split
+current_ips.each do |thisIP|
+	if IPAddress.valid? thisIP.to_s		
+		pp '  Removing IP address: ' + thisIP
+		page = agent.get(removeip_page_url + server_id + '&ip=' + thisIP)
+		pp page
+	end
+end
+
 #Now add the current IP to the list.
 db_form = page.forms[2]
 db_form.ip = db_form.curip
-puts 'Setting allowed IP: ' + db_form.curip
+puts 'Setting new allowed IP: ' + db_form.curip
 
 page = agent.submit(db_form);
 
