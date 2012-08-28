@@ -54,22 +54,30 @@ puts 'Got first server ID: ' + server_id
 database_page_url = database_page_url + server_id
 page = agent.get(database_page_url)
 
+#Get the current IP
+db_form = page.forms[2]
+db_form.ip = db_form.curip
+ip_exists_already = false
+
 #Now we want to submit the form as many times as it takes to clear out the list of current IP addresses
 current_ips = page.search('ul.dbextlister li.four').text.split
 current_ips.each do |thisIP|
-	if IPAddress.valid? thisIP.to_s		
-		pp '  Removing IP address: ' + thisIP
-		page = agent.get(removeip_page_url + server_id + '&ip=' + thisIP)
-		pp page
+	if IPAddress.valid? thisIP.to_s
+		if thisIP.to_s == db_form.curip.to_s
+			ip_exists_already = true
+		else
+			pp 'Removing IP address: ' + thisIP
+			page = agent.get(removeip_page_url + server_id + '&ip=' + thisIP)
+		end
 	end
 end
 
-#Now add the current IP to the list.
-db_form = page.forms[2]
-db_form.ip = db_form.curip
-puts 'Setting new allowed IP: ' + db_form.curip
+if ip_exists_already == true
+	puts 'Your IP was already in the list.'
+else
+	#Now add the current IP to the list.
+	puts 'Setting new allowed IP: ' + db_form.curip
+	page = agent.submit(db_form);
+end
 
-page = agent.submit(db_form);
-
-#pp page
 print "Done!\n\n"
